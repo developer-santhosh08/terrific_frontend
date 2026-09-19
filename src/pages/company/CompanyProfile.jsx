@@ -51,6 +51,7 @@ const CompanyProfile = () => {
     const [facebookUrl, setFacebookUrl] = useState('');
 
     const [logoPreview, setLogoPreview] = useState('/assets/images/logos.webp');
+    const [logoError, setLogoError] = useState(false);
     const [faviconPreview, setFaviconPreview] = useState('/assets/images/fav-icon.png');
     const [faviconError, setFaviconError] = useState(false);
 
@@ -268,10 +269,10 @@ const CompanyProfile = () => {
         <section className="content">
             <div className="container-fluid">
                 <div className="card">
-                    <div className="card-header with-border d-flex justify-content-between align-items-center">
-                        <h3 className="card-title">Global Settings</h3>
-                        <div>
-                            <button type="submit" form="company-profile-form" className="btn-save me-2">
+                    <div className="card-header with-border d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center tw-gap-3">
+                        <h3 className="card-title tw-m-0">Global Settings</h3>
+                        <div className="d-flex tw-gap-2">
+                            <button type="submit" form="company-profile-form" className="btn-save">
                                 Save
                             </button>
                             <button type="button" className="btn-cancel" onClick={() => navigate('/')}>
@@ -282,7 +283,7 @@ const CompanyProfile = () => {
                     <div className="card-body">
                         <form id="company-profile-form" onSubmit={handleSave}>
                             {/* Tabs Navigation */}
-                            <div style={{ display: 'flex', gap: '32px', marginBottom: '24px', borderBottom: '1px solid #ddd', paddingBottom: '1px' }}>
+                            <div className="tw-flex tw-flex-col sm:tw-flex-row tw-gap-2 tw-mb-6">
                                 <TabButton id="general" icon={<Info size={18} weight={activeTab === 'general' ? "fill" : "duotone"} />} label="General Details" active={activeTab === 'general'} onClick={setActiveTab} />
                                 <TabButton id="branding" icon={<Browser size={18} weight={activeTab === 'branding' ? "fill" : "duotone"} />} label="Branding & Theme" active={activeTab === 'branding'} onClick={setActiveTab} />
                                 <TabButton id="email" icon={<EnvelopeSimple size={18} weight={activeTab === 'email' ? "fill" : "duotone"} />} label="Email Settings" active={activeTab === 'email'} onClick={setActiveTab} />
@@ -293,7 +294,7 @@ const CompanyProfile = () => {
                             <div>
                                 {/* General Details Tab */}
                                 {activeTab === 'general' && (
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                                    <div className="tw-grid tw-grid-cols-1 lg:tw-grid-cols-2 tw-gap-6">
                                         {/* General Details Form */}
                                         <div style={cardStyle}>
                                             <div style={blockHeaderStyle}>
@@ -364,7 +365,7 @@ const CompanyProfile = () => {
 
                                 {/* Branding & Theme Tab */}
                                 {activeTab === 'branding' && (
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                                    <div className="tw-grid tw-grid-cols-1 lg:tw-grid-cols-2 tw-gap-6">
                                         {/* Logos & Icons */}
                                         <div style={cardStyle}>
                                             <div style={blockHeaderStyle}>
@@ -556,7 +557,7 @@ const CompanyProfile = () => {
 
                                 {/* Email Settings Tab */}
                                 {activeTab === 'email' && (
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                                    <div className="tw-grid tw-grid-cols-1 lg:tw-grid-cols-2 tw-gap-6">
                                         <div style={cardStyle}>
                                             <div style={{ ...blockHeaderStyle, justifyContent: 'space-between' }}>
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -613,7 +614,7 @@ const CompanyProfile = () => {
 
                                 {/* Advanced & Others Tab */}
                                 {activeTab === 'advanced' && (
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                                    <div className="tw-grid tw-grid-cols-1 lg:tw-grid-cols-2 tw-gap-6">
                                         <div style={cardStyle}>
                                             <div style={blockHeaderStyle}>
                                                 <div style={blockIconContainerStyle('rgba(99, 102, 241, 0.1)', '#6366f1')}>
@@ -631,8 +632,8 @@ const CompanyProfile = () => {
                                                         className="react-select-container"
                                                         classNamePrefix="react-select"
                                                         styles={{
-                                                            control: (base) => ({ ...base, minHeight: '42px', minWidth: '300px' }),
-                                                            menu: (base) => ({ ...base, zIndex: 9999, minWidth: 'max-content' })
+                                                            control: (base) => ({ ...base, minHeight: '42px', width: '100%' }),
+                                                            menu: (base) => ({ ...base, zIndex: 9999, minWidth: '100%' })
                                                         }}
                                                     />
                                                 </div>
@@ -685,25 +686,13 @@ const TabButton = ({ id, icon, label, active, onClick }) => {
         <button
             type="button"
             onClick={() => onClick(id)}
-            style={{
-                background: 'none',
-                border: 'none',
-                padding: '0 0 12px 0',
-                margin: 0,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                fontSize: '14px',
-                fontWeight: active ? '700' : '600',
-                color: active ? '#2b9d90' : '#64748b',
-                cursor: 'pointer',
-                borderBottom: active ? '3px solid #2b9d90' : '3px solid transparent',
-                transition: 'all 0.2s',
-                position: 'relative',
-                top: '2px'
-            }}
+            className={`tw-flex tw-items-center tw-justify-center tw-gap-2 tw-px-3 tw-py-2 tw-text-sm sm:tw-text-base sm:tw-px-4 tw-rounded-sm tw-w-full sm:tw-w-auto tw-font-medium tw-transition-colors ${
+                active 
+                ? 'tw-bg-[#2b9d90] tw-text-white tw-border tw-border-[#2b9d90]' 
+                : 'tw-bg-white tw-text-gray-700 tw-border tw-border-gray-300 hover:tw-bg-gray-50'
+            }`}
         >
-            <span style={{ display: 'flex', alignItems: 'center', color: active ? '#2b9d90' : '#94a3b8' }}>
+            <span className={`tw-flex tw-items-center ${active ? 'tw-text-white' : 'tw-text-gray-500'}`}>
                 {icon}
             </span>
             {label}
