@@ -16,6 +16,37 @@ const Login = () => {
 
     const API_BASE = import.meta.env.VITE_API_BASE_URL ?? '';
 
+    // Disable DevTools shortcuts
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            // Prevent F12
+            if (e.keyCode === 123) {
+                e.preventDefault();
+            }
+            // Prevent Ctrl+Shift+I
+            if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+                e.preventDefault();
+            }
+            // Prevent Ctrl+Shift+C
+            if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
+                e.preventDefault();
+            }
+            // Prevent Ctrl+Shift+J
+            if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
+                e.preventDefault();
+            }
+            // Prevent Ctrl+U (View Source)
+            if (e.ctrlKey && e.keyCode === 85) {
+                e.preventDefault();
+            }
+        };
+        
+        document.addEventListener('keydown', handleKeyDown);
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
+
     useEffect(() => {
         const fetchCompanyDetails = async () => {
             try {
@@ -112,7 +143,7 @@ const Login = () => {
     };
 
     return (
-        <div className="lp-bg">
+        <div className="lp-bg" onContextMenu={(e) => e.preventDefault()}>
 
             {/* Animated background shapes */}
             <div className="lp-shape lp-shape-1" />

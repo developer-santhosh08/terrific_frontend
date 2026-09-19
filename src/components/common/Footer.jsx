@@ -28,6 +28,8 @@ const Footer = () => {
             localStorage.removeItem('erp_token');
             localStorage.removeItem('erp_user');
             
+            console.clear();
+            
             window.location.href = '/login';
         }
     };
