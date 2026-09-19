@@ -89,26 +89,26 @@ const UserRightsList = () => {
         <section className="content">
             <div className="container-fluid">
                 <div className="card">
-                    <div className="card-header with-border d-flex justify-content-between align-items-center">
-                        <h3 className="card-title">User List</h3>
-                        <div className="d-flex gap-2">
+                    <div className="card-header with-border d-flex justify-content-between align-items-center tw-flex-wrap tw-gap-2">
+                        <h3 className="card-title tw-mb-0">User List</h3>
+                        <div className="d-flex tw-flex-nowrap tw-gap-2">
                             {hasPermission('User Rights.User Right.Add') && (
                                 <button
                                     type="button"
-                                    className="btn-reset"
+                                    className="btn-reset d-flex align-items-center tw-justify-center tw-gap-1 tw-whitespace-nowrap max-sm:!tw-text-xs max-sm:!tw-px-3 max-sm:!tw-py-[6px] max-sm:!tw-h-auto"
                                     onClick={() => setShowRevertPopup(true)}
                                 >
-                                    <ArrowBendUpLeftIcon weight="bold" className="" />
-                                    Revert List
+                                    <ArrowBendUpLeftIcon weight="bold" className="tw-w-4 max-sm:tw-w-3.5" />
+                                    <span>Revert List</span>
                                 </button>
                             )}
                             {hasPermission('User Rights.User Right.Add') && (
                                 <button
-                                    className="btn-create"
+                                    className="btn-create d-flex align-items-center tw-justify-center tw-gap-1 tw-whitespace-nowrap max-sm:!tw-text-xs max-sm:!tw-px-3 max-sm:!tw-py-[6px] max-sm:!tw-h-auto"
                                     onClick={() => navigate('/user-rights/add')}
                                 >
-                                    <PlusIcon weight="duotone" className="tw-w-4" />
-                                    Create Users
+                                    <PlusIcon weight="bold" className="tw-w-4 max-sm:tw-w-3.5 text-white" />
+                                    <span className="text-white">Create Users</span>
                                 </button>
                             )}
                         </div>
