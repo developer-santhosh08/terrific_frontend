@@ -3,6 +3,7 @@ import Select from 'react-select';
 import TableSortIcon from '../../../components/TableSortIcon';
 import SmartPagination from '../../../components/SmartPagination';
 import { useSortableData } from '../../../hooks/useSortableData';
+import MobileCard from '../../../components/common/MobileCard';
 
 const customerOptions = [
     { value: 'c1', label: 'Saras Industry' },
@@ -138,7 +139,7 @@ const CustomerLedgerReport = () => {
                         </div>
 
                         {/* ── Table ── */}
-                        <div className="table-responsive">
+                        <div className="table-responsive tw-hidden md:tw-block">
                             <table className="table table-bordered table-striped no-margin">
                                 <thead>
                                     <tr>
@@ -182,6 +183,29 @@ const CustomerLedgerReport = () => {
                                 </tbody>
                             </table>
                         </div>
+
+                        {/* Mobile View */}
+                        <div className="tw-block md:tw-hidden tw-mt-4">
+                            {paginatedData.length > 0 ? (
+                                paginatedData.map((row, idx) => (
+                                    <MobileCard key={row.id}>
+                                        <MobileCard.Header label="#" value={startIndex + idx + 1} />
+                                        <MobileCard.Body>
+                                            <div className="tw-grid tw-grid-cols-2 tw-gap-3">
+                                                <MobileCard.Field label="Customer Name" value={row.customerName} />
+                                                <MobileCard.Field label="Invoice No" value={row.invoiceNo} />
+                                                <MobileCard.Field label="Date" value={row.date} />
+                                                <MobileCard.Field label="Amount" value={row.amount} />
+                                                <MobileCard.Field label="Balance" value={row.balance} />
+                                            </div>
+                                        </MobileCard.Body>
+                                    </MobileCard>
+                                ))
+                            ) : (
+                                <div className="tw-text-center tw-text-slate-400 tw-py-8">No data found</div>
+                            )}
+                        </div>
+
 
                         <div className="d-flex justify-content-between align-items-center tw-mt-4 tw-text-sm">
                             <div>

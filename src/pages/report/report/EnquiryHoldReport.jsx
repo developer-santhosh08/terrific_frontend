@@ -3,6 +3,7 @@ import Select from 'react-select';
 import TableSortIcon from '../../../components/TableSortIcon';
 import SmartPagination from '../../../components/SmartPagination';
 import { useSortableData } from '../../../hooks/useSortableData';
+import MobileCard from '../../../components/common/MobileCard';
 
 const EnquiryHoldReport = () => {
     const [reportData, setReportData] = useState([]);
@@ -184,7 +185,7 @@ const EnquiryHoldReport = () => {
                         </div>
 
                         {/* ── Table ── */}
-                        <div className="table-responsive">
+                        <div className="table-responsive tw-hidden md:tw-block">
                             <table className="table table-bordered table-striped no-margin">
                                 <thead>
                                     <tr>
@@ -240,6 +241,33 @@ const EnquiryHoldReport = () => {
                                 </tbody>
                             </table>
                         </div>
+
+                        {/* Mobile View */}
+                        <div className="tw-block md:tw-hidden tw-mt-4">
+                            {loading ? (
+                                <div className="tw-text-center tw-py-4 tw-text-slate-500">Loading...</div>
+                            ) : paginatedData.length > 0 ? (
+                                paginatedData.map((row, idx) => (
+                                    <MobileCard key={row.id || idx}>
+                                        <MobileCard.Header label="#" value={startIndex + idx + 1} />
+                                        <MobileCard.Body>
+                                            <div className="tw-grid tw-grid-cols-2 tw-gap-3">
+                                                <MobileCard.Field label="Enq. No" value={row.enq_no || '-'} />
+                                                <MobileCard.Field label="Enq. Date" value={formatDate(row.enq_date)} />
+                                                <MobileCard.Field label="Comtt. Date" value={formatDate(row.comtt_date)} />
+                                                <MobileCard.Field label="Mobile" value={row.mobile || '-'} />
+                                                <MobileCard.Field label="Vertical" value={row.vertical || '-'} />
+                                                <MobileCard.Field label="Allotted To" value={row.allotted_to || '-'} />
+                                                <MobileCard.Field label="Current Stage" value={row.current_stage || '-'} />
+                                            </div>
+                                        </MobileCard.Body>
+                                    </MobileCard>
+                                ))
+                            ) : (
+                                <div className="tw-text-center tw-text-slate-400 tw-py-8">No data found</div>
+                            )}
+                        </div>
+
 
                         <div className="d-flex justify-content-between align-items-center tw-mt-4 tw-text-sm">
                             <div>
