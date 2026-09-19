@@ -9,6 +9,9 @@ import TableSortIcon from '../../components/TableSortIcon';
 import DeletePopup from '../../components/Popup/DeletePopup.jsx';
 import UserListPopup from '../../components/Popup/UserListPopup.jsx';
 import { usePermissions } from '../../context/PermissionContext';
+import MobileCard from '../../components/common/MobileCard';
+
+
 
 const UserRightsList = () => {
     const { hasPermission } = usePermissions();
@@ -139,7 +142,7 @@ const UserRightsList = () => {
                             </div>
                         </div>
 
-                        <div className="table-responsive">
+                        <div className="table-responsive tw-hidden md:tw-block">
                             <table className="table table-bordered table-striped no-margin">
                                 <thead>
                                     <tr>
@@ -203,6 +206,63 @@ const UserRightsList = () => {
                                 </tbody>
                             </table>
                         </div>
+
+                        {/* Mobile View */}
+                        <div className="tw-block md:tw-hidden tw-mt-4">
+                            {sortedData.map((u, index) => (
+                                <MobileCard key={u.id}>
+                                    <MobileCard.Header label="Name" value={u.name} />
+                                    <MobileCard.Body>
+                                        <div className="tw-grid tw-grid-cols-2 tw-gap-3">
+                                            <MobileCard.Field label="#" value={startIndex + index} />
+                                            <MobileCard.Field label="Role" value={u.role ? u.role.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') : ''} />
+                                            <MobileCard.Field label="Status" value={
+                                                <span className="badge badge-success" style={{ backgroundColor: u.status === 1 ? '#28a745' : '#dc3545' }}>
+                                                    {u.status === 1 ? 'Active' : 'Inactive'}
+                                                </span>
+                                            } />
+                                        </div>
+                                        <div className="tw-mt-2">
+                                            <MobileCard.Field label="Email" value={u.email} />
+                                        </div>
+                                    </MobileCard.Body>
+                                    {hasActionPermission && (
+                                        <MobileCard.Footer className="tw-border-t tw-border-slate-100 tw-flex tw-justify-end tw-items-center">
+                                            <MobileCard.Actions>
+                                                {hasPermission('User Rights.User Right.Edit') && (
+                                                    <button type="button" className="list-action-btn btn-edit" onClick={() => navigate(`/user-rights/edit/${u.id}`)}>
+                                                        <PencilSimpleIcon weight="duotone" className="tw-w-4" />
+                                                    </button>
+                                                )}
+                                                {hasPermission('User Rights.User Right.Delete') && (
+                                                    <button
+                                                        type="button"
+                                                        className="list-action-btn btn-delete"
+                                                        onClick={() => handleDelete(u.id)}
+                                                    >
+                                                        <TrashIcon weight="duotone" className="tw-w-4" />
+                                                    </button>
+                                                )}
+                                                {hasPermission('User Rights.User Right.Rights') && (
+                                                    <button
+                                                        type="button"
+                                                        className="list-action-btn"
+                                                        style={{ backgroundColor: '#0d6efd', color: '#fff', borderColor: '#0d6efd' }}
+                                                        onClick={() => navigate('/user-rights/assign', { state: { user: u } })}
+                                                    >
+                                                        <ShieldCheckIcon weight="bold" className="tw-w-4" />
+                                                    </button>
+                                                )}
+                                            </MobileCard.Actions>
+                                        </MobileCard.Footer>
+                                    )}
+                                </MobileCard>
+                            ))}
+                            {sortedData.length === 0 && (
+                                <div className="tw-text-center tw-text-slate-400 tw-py-8">No records found</div>
+                            )}
+                        </div>
+
                         <div className="tw-flex tw-justify-between tw-items-center tw-mt-4">
                             <div className="tw-text-gray-600 tw-text-sm">
                                 Showing {totalEntries === 0 ? 0 : startIndex + 1} to {endIndex} of {totalEntries} entries
