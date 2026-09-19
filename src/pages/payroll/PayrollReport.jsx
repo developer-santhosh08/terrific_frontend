@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Select from 'react-select';
 import TableSortIcon from '../../components/TableSortIcon';
 import { useLoader } from '../../context/LoaderContext';
+import MobileCard from '../../components/common/MobileCard';
 
 const rsStyles = {
     control: (p) => ({ ...p, background: '#fff', minHeight: '36px' }),
@@ -175,7 +176,7 @@ const PayrollReport = () => {
                         </div>
 
                         {/* Table */}
-                        <div className="table-responsive">
+                        <div className="table-responsive tw-hidden md:tw-block">
                             <table className="table table-bordered table-striped no-margin">
                                 <thead>
                                     <tr>
@@ -210,6 +211,28 @@ const PayrollReport = () => {
                                     )}
                                 </tbody>
                             </table>
+                        </div>
+
+                        {/* Mobile View */}
+                        <div className="tw-block md:tw-hidden tw-mt-4">
+                            {paginated.length > 0 ? paginated.map((row, idx) => (
+                                <MobileCard key={idx}>
+                                    <MobileCard.Header label="S.no" value={start + idx + 1} />
+                                    <MobileCard.Body>
+                                        <div className="tw-grid tw-grid-cols-2 tw-gap-3">
+                                            <MobileCard.Field label="Employee Name" value={row.employee} />
+                                            <MobileCard.Field label="Date" value={row.date} />
+                                            <MobileCard.Field label="Present" value={row.present} />
+                                            <MobileCard.Field label="Absent" value={row.absent} />
+                                            <MobileCard.Field label="In Time" value={row.inTime} />
+                                            <MobileCard.Field label="Out Time" value={row.outTime} />
+                                            <MobileCard.Field label="OT" value={row.ot} />
+                                        </div>
+                                    </MobileCard.Body>
+                                </MobileCard>
+                            )) : (
+                                <div className="tw-text-center tw-text-slate-400 tw-py-8">No data available in table</div>
+                            )}
                         </div>
 
                         {/* Showing info + Pagination */}

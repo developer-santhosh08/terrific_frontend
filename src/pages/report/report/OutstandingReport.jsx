@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import TableSortIcon from '../../../components/TableSortIcon';
 import SmartPagination from '../../../components/SmartPagination';
 import { useSortableData } from '../../../hooks/useSortableData';
+import MobileCard from '../../../components/common/MobileCard';
 
 const OutstandingReport = () => {
     const [reportData, setReportData] = useState([]);
@@ -168,7 +169,7 @@ const OutstandingReport = () => {
                         </div>
 
                         {/* ── Table ── */}
-                        <div className="table-responsive">
+                        <div className="table-responsive tw-hidden md:tw-block">
                             <table className="table table-bordered table-striped no-margin">
                                 <thead>
                                     <tr>
@@ -222,6 +223,37 @@ const OutstandingReport = () => {
                                 </tbody>
                             </table>
                         </div>
+
+                        {/* Mobile View */}
+                        <div className="tw-block md:tw-hidden tw-mt-4">
+                            {loading ? (
+                                <div className="tw-text-center tw-py-4 tw-text-slate-500">Loading...</div>
+                            ) : paginatedData.length > 0 ? (
+                                paginatedData.map((row, idx) => {
+                                    const cNum = `CON-${row.id}`;
+                                    const amount = Number(row.contra_amount) || 0;
+                                    const interest = Number(row.contra_intrest_amount) || Number(row.contra_intrest) || 0;
+
+                                    return (
+                                        <MobileCard key={row.id}>
+                                            <MobileCard.Header label="Sno" value={startIndex + idx + 1} />
+                                            <MobileCard.Body>
+                                                <div className="tw-grid tw-grid-cols-2 tw-gap-3">
+                                                    <MobileCard.Field label="Contra Number" value={cNum} />
+                                                    <MobileCard.Field label="Contra Person" value={row.name || '-'} />
+                                                    <MobileCard.Field label="Amount" value={amount.toFixed(2)} />
+                                                    <MobileCard.Field label="Contra Date" value={formatDate(row.contra_date)} />
+                                                    <MobileCard.Field label="Interest" value={interest.toFixed(2)} />
+                                                </div>
+                                            </MobileCard.Body>
+                                        </MobileCard>
+                                    );
+                                })
+                            ) : (
+                                <div className="tw-text-center tw-text-slate-400 tw-py-8">No data found</div>
+                            )}
+                        </div>
+
                         
                         <div className="d-flex justify-content-between align-items-center tw-mt-4 tw-text-sm">
                             <div>

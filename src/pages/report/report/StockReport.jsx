@@ -3,6 +3,7 @@ import Select from 'react-select';
 import TableSortIcon from '../../../components/TableSortIcon';
 import SmartPagination from '../../../components/SmartPagination';
 import { useSortableData } from '../../../hooks/useSortableData';
+import MobileCard from '../../../components/common/MobileCard';
 
 const StockReport = () => {
     const [stockData, setStockData] = useState([]);
@@ -142,7 +143,7 @@ const StockReport = () => {
                         </div>
 
                         {/* ── Table ── */}
-                        <div className="table-responsive">
+                        <div className="table-responsive tw-hidden md:tw-block">
                             <table className="table table-bordered table-striped no-margin">
                                 <thead>
                                     <tr>
@@ -205,6 +206,39 @@ const StockReport = () => {
                                 </tbody>
                             </table>
                         </div>
+
+                        {/* Mobile View */}
+                        <div className="tw-block md:tw-hidden tw-mt-4">
+                            {loading ? (
+                                <div className="tw-text-center tw-py-4 tw-text-slate-500">Loading...</div>
+                            ) : paginatedData.length > 0 ? (
+                                paginatedData.map((row, idx) => {
+                                    const availableQty = Number(row.available_quantity) || 0;
+                                    const soldStock = Number(row.sold_stock) || 0;
+                                    const totalQty = availableQty + Math.abs(soldStock);
+                                    const displayName = row.product_name || '-';
+                                    return (
+                                        <MobileCard key={idx}>
+                                            <MobileCard.Header label="Sno" value={startIndex + idx + 1} />
+                                            <MobileCard.Body>
+                                                <div className="tw-grid tw-grid-cols-2 tw-gap-3">
+                                                    <MobileCard.Field label="Product Type" value={row.brand_name || '-'} />
+                                                    <MobileCard.Field label="Sub Category" value={row.sub_category_name || '-'} />
+                                                    <MobileCard.Field label="Model" value={row.model_name || '-'} />
+                                                    <MobileCard.Field label="Product Name" value={displayName} />
+                                                    <MobileCard.Field label="Total Qty" value={totalQty} />
+                                                    <MobileCard.Field label="Available Qty" value={availableQty} />
+                                                    <MobileCard.Field label="Sold Stock" value={Math.abs(soldStock)} />
+                                                </div>
+                                            </MobileCard.Body>
+                                        </MobileCard>
+                                    );
+                                })
+                            ) : (
+                                <div className="tw-text-center tw-text-slate-400 tw-py-8">No data found</div>
+                            )}
+                        </div>
+
                         
                         <div className="d-flex justify-content-between align-items-center tw-mt-4 tw-text-sm">
                             <div>

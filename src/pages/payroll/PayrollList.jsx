@@ -5,6 +5,7 @@ import { PencilSimpleIcon } from '@phosphor-icons/react';
 import TableSortIcon from '../../components/TableSortIcon';
 import { useLoader } from '../../context/LoaderContext';
 import { usePermissions } from '../../context/PermissionContext';
+import MobileCard from '../../components/common/MobileCard';
 
 const PayrollList = () => {
     const { hasPermission } = usePermissions();
@@ -117,7 +118,7 @@ const PayrollList = () => {
                         </div>
 
                         {/* Table */}
-                        <div className="table-responsive">
+                        <div className="table-responsive tw-hidden md:tw-block">
                             <table className="table table-bordered table-striped no-margin">
                                 <thead>
                                     <tr>
@@ -166,6 +167,39 @@ const PayrollList = () => {
                                     )}
                                 </tbody>
                             </table>
+                        </div>
+
+                        {/* Mobile View */}
+                        <div className="tw-block md:tw-hidden tw-mt-4">
+                            {paginated.map((row, idx) => (
+                                <MobileCard key={row.id}>
+                                    <MobileCard.Header label="Sno" value={start + idx + 1} />
+                                    <MobileCard.Body>
+                                        <div className="tw-grid tw-grid-cols-2 tw-gap-3">
+                                            <MobileCard.Field label="Date" value={row.date} />
+                                            <MobileCard.Field label="al_present" value={row.al_present} />
+                                            <MobileCard.Field label="al_absent" value={row.al_absent} />
+                                            <MobileCard.Field label="al_ot" value={row.al_ot} />
+                                        </div>
+                                    </MobileCard.Body>
+                                    {hasEditPermission && (
+                                        <MobileCard.Footer className="tw-border-t tw-border-slate-100 tw-flex tw-justify-end tw-items-center">
+                                            <MobileCard.Actions>
+                                                <button
+                                                    type="button"
+                                                    className="list-action-btn btn-edit"
+                                                    onClick={() => navigate('/payroll/salary', { state: { selectedDate: row.raw_date } })}
+                                                >
+                                                    <PencilSimpleIcon weight="duotone" className="tw-w-4" />
+                                                </button>
+                                            </MobileCard.Actions>
+                                        </MobileCard.Footer>
+                                    )}
+                                </MobileCard>
+                            ))}
+                            {paginated.length === 0 && (
+                                <div className="tw-text-center tw-text-slate-400 tw-py-8">No records found</div>
+                            )}
                         </div>
 
                         {/* Bottom: Showing info + Pagination */}

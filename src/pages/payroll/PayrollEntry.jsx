@@ -4,6 +4,7 @@ import TableSortIcon from '../../components/TableSortIcon';
 import SubmitPopup from '../../components/Popup/SubmitPopup';
 import UpdatePopup from '../../components/Popup/UpdatePopup';
 import SuccessPopup from '../../components/Popup/SuccessPopup';
+import MobileCard from '../../components/common/MobileCard';
 
 import { useLocation } from 'react-router-dom';
 
@@ -230,7 +231,7 @@ const PayrollEntry = () => {
                         </div>
 
                         {/* Table */}
-                        <div className="table-responsive">
+                        <div className="table-responsive tw-hidden md:tw-block">
                             <table className="table table-bordered">
                                 <thead>
                                     <tr>
@@ -312,6 +313,74 @@ const PayrollEntry = () => {
                                     )}
                                 </tbody>
                             </table>
+                        </div>
+
+                        {/* Mobile View */}
+                        <div className="tw-block md:tw-hidden tw-mt-4">
+                            {paginated.map((emp, idx) => (
+                                <MobileCard key={emp.id}>
+                                    <MobileCard.Header label="#" value={start + idx + 1} />
+                                    <MobileCard.Body>
+                                        <div className="tw-grid tw-grid-cols-2 tw-gap-3">
+                                            <MobileCard.Field label="Employee" value={emp.name} />
+                                            <MobileCard.Field label="Status" value={
+                                                <div className="tw-flex tw-justify-start tw-items-center">
+                                                    <input
+                                                        type="checkbox"
+                                                        id={`status-mob-${emp.id}`}
+                                                        checked={emp.status}
+                                                        onChange={e => handleStatus(emp.id, e.target.checked)}
+                                                    />
+                                                    <label htmlFor={`status-mob-${emp.id}`} style={{ marginBottom: 0, marginLeft: '0.5rem' }}>Present</label>
+                                                </div>
+                                            } />
+                                            <MobileCard.Field label="OT" value={
+                                                <div className="tw-flex tw-justify-start tw-items-center">
+                                                    <input
+                                                        type="checkbox"
+                                                        id={`ot-mob-${emp.id}`}
+                                                        checked={emp.ot}
+                                                        disabled={!emp.status}
+                                                        onChange={e => update(emp.id, 'ot', e.target.checked)}
+                                                    />
+                                                    <label htmlFor={`ot-mob-${emp.id}`} style={{ marginBottom: 0, marginLeft: '0.5rem' }}>OT</label>
+                                                </div>
+                                            } />
+                                            <MobileCard.Field label="Intime" value={
+                                                <input
+                                                    type="time"
+                                                    className="form-control form-control-sm"
+                                                    value={emp.inTime}
+                                                    disabled={!emp.status}
+                                                    onChange={e => update(emp.id, 'inTime', e.target.value)}
+                                                />
+                                            } />
+                                            <MobileCard.Field label="OutTime" value={
+                                                <input
+                                                    type="time"
+                                                    className="form-control form-control-sm"
+                                                    value={emp.outTime}
+                                                    disabled={!emp.status}
+                                                    onChange={e => update(emp.id, 'outTime', e.target.value)}
+                                                />
+                                            } />
+                                            <MobileCard.Field label="OT(hrs)" value={
+                                                <input
+                                                    type="text"
+                                                    className="form-control form-control-sm tw-text-center"
+                                                    placeholder="OT"
+                                                    value={emp.otHrs}
+                                                    disabled={!emp.status || !emp.ot}
+                                                    onChange={e => update(emp.id, 'otHrs', e.target.value)}
+                                                />
+                                            } />
+                                        </div>
+                                    </MobileCard.Body>
+                                </MobileCard>
+                            ))}
+                            {paginated.length === 0 && (
+                                <div className="tw-text-center tw-text-slate-400 tw-py-8">No records found</div>
+                            )}
                         </div>
 
                         {/* Bottom: Showing info + Pagination */}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLoader } from '../../context/LoaderContext';
 import { usePermissions } from '../../context/PermissionContext';
+import MobileCard from '../../components/common/MobileCard';
 
 const SalaryStructureList = () => {
     const { hasPermission } = usePermissions();
@@ -124,8 +125,9 @@ const SalaryStructureList = () => {
                             <div className="card-header">
                                 <h3 className="card-title">Existing Structures</h3>
                             </div>
-                            <div className="card-body table-responsive">
-                                <table className="table table-bordered table-striped">
+                            <div className="card-body">
+                                <div className="table-responsive tw-hidden md:tw-block">
+                                    <table className="table table-bordered table-striped">
                                     <thead>
                                         <tr>
                                             <th>Emp ID</th>
@@ -149,6 +151,28 @@ const SalaryStructureList = () => {
                                         ))}
                                     </tbody>
                                 </table>
+                                </div>
+                                
+                                {/* Mobile View */}
+                                <div className="tw-block md:tw-hidden tw-mt-4">
+                                    {structures.length > 0 ? structures.map((s, idx) => (
+                                        <MobileCard key={s.id}>
+                                            <MobileCard.Header label="#" value={idx + 1} />
+                                            <MobileCard.Body>
+                                                <div className="tw-grid tw-grid-cols-2 tw-gap-3">
+                                                    <MobileCard.Field label="Emp ID" value={s.employee_id} />
+                                                    <MobileCard.Field label="Basic" value={s.basic_salary} />
+                                                    <MobileCard.Field label="HRA" value={s.hra} />
+                                                    <MobileCard.Field label="DA" value={s.da} />
+                                                    <MobileCard.Field label="Allowances" value={s.other_allowances} />
+                                                    <MobileCard.Field label="Deductions" value={s.fixed_deductions} />
+                                                </div>
+                                            </MobileCard.Body>
+                                        </MobileCard>
+                                    )) : (
+                                        <div className="tw-text-center tw-text-slate-400 tw-py-8">No data available</div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
