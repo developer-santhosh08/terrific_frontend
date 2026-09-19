@@ -8,6 +8,8 @@ import TableSortIcon from '../../../../components/TableSortIcon';
 import DeletePopup from '../../../../components/Popup/DeletePopup.jsx';
 import { apiFetch } from '../../../../lib/api';
 import { usePermissions } from '../../../../context/PermissionContext';
+import MobileCard from '../../../../components/common/MobileCard';
+
 
 const VendorMappingList = () => {
     const { hasPermission } = usePermissions();
@@ -158,7 +160,7 @@ setLoading(false);
                             </div>
                         </div>
 
-                        <div className="table-responsive">
+                        <div className="table-responsive tw-hidden md:tw-block">
                             <table className="table table-bordered table-striped no-margin">
                                 <thead>
                                     <tr>
@@ -213,6 +215,53 @@ setLoading(false);
                                 </tbody>
                             </table>
                         </div>
+
+                        {/* Mobile View */}
+                        <div className="tw-block md:tw-hidden tw-mt-4">
+                            {sortedData.map((e, index) => (
+                                <MobileCard key={index}>
+                                    <MobileCard.Header label="Vendor Name" value={e.vendorName} />
+                                    <MobileCard.Body>
+                                        <div className="tw-grid tw-grid-cols-2 tw-gap-3">
+                                            <MobileCard.Field label="#" value={startIndex + index} />
+                                            <MobileCard.Field label="Number of Product" value={e.numberOfProduct} />
+                                            <MobileCard.Field label="Status" value={
+                                                <span className={`badge ${e.status === 'Active' ? 'bg-success' : 'bg-danger'}`}>
+                                                    {e.status}
+                                                </span>
+                                            } />
+                                        </div>
+                                    </MobileCard.Body>
+                                    {hasActionPermission && (
+                                        <MobileCard.Footer className="tw-border-t tw-border-slate-100 tw-flex tw-justify-end tw-items-center">
+                                            <MobileCard.Actions>
+                                                {hasPermission('Power Master.Vendor - Vendor Product Mapping.Edit') && (
+                                                    <button type="button" className="list-action-btn btn-edit" onClick={() => navigate(`/power-master/vendor/vendor-product-mapping/edit/${e.id}`)}>
+                                                        <PencilSimpleIcon weight="bold" className="tw-w-4 text-white" />
+                                                    </button>
+                                                )}
+                                                {hasPermission('Power Master.Vendor - Vendor Product Mapping.Delete') && (
+                                                    <button 
+                                                        type="button" 
+                                                        className="list-action-btn btn-delete" 
+                                                        onClick={() => {
+                                                            setPendingDeleteIds(e.mapping_ids);
+                                                            setShowDeletePopup(true);
+                                                        }}
+                                                    >
+                                                        <TrashIcon weight="bold" className="tw-w-4 text-white" />
+                                                    </button>
+                                                )}
+                                            </MobileCard.Actions>
+                                        </MobileCard.Footer>
+                                    )}
+                                </MobileCard>
+                            ))}
+                            {sortedData.length === 0 && (
+                                <div className="tw-text-center tw-text-slate-400 tw-py-8">No records found</div>
+                            )}
+                        </div>
+
                         <div className="tw-flex tw-justify-between tw-items-center tw-mt-4">
                             <div className="tw-text-gray-600 tw-text-sm">
                                 Showing {totalEntries === 0 ? 0 : startIndex + 1} to {endIndex} of {totalEntries} entries

@@ -8,6 +8,8 @@ import TableSortIcon from '../../../../components/TableSortIcon';
 import DeletePopup from '../../../../components/Popup/DeletePopup.jsx';
 import { apiFetch } from '../../../../lib/api';
 import { usePermissions } from '../../../../context/PermissionContext';
+import MobileCard from '../../../../components/common/MobileCard';
+
 
 const VendorList = () => {
     const { hasPermission } = usePermissions();
@@ -140,7 +142,7 @@ const VendorList = () => {
                             </div>
                         </div>
 
-                        <div className="table-responsive">
+                        <div className="table-responsive tw-hidden md:tw-block">
                             <table className="table table-bordered table-striped no-margin">
                                 <thead>
                                     <tr>
@@ -194,6 +196,51 @@ const VendorList = () => {
                                 </tbody>
                             </table>
                         </div>
+
+                        {/* Mobile View */}
+                        <div className="tw-block md:tw-hidden tw-mt-4">
+                            {sortedData.map((e, index) => (
+                                <MobileCard key={e.id || index}>
+                                    <MobileCard.Header label="Vendor Name" value={e.name} />
+                                    <MobileCard.Body>
+                                        <div className="tw-grid tw-grid-cols-2 tw-gap-3">
+                                            <MobileCard.Field label="#" value={startIndex + index} />
+                                            <MobileCard.Field label="Mobile No" value={e.mobileNo} />
+                                            <MobileCard.Field label="Phone No" value={e.phoneNo} />
+                                            <MobileCard.Field label="Status" value={
+                                                <span className={`badge ${e.status === 'Active' ? 'bg-success' : 'bg-danger'}`}>
+                                                    {e.status}
+                                                </span>
+                                            } />
+                                        </div>
+                                    </MobileCard.Body>
+                                    {hasActionPermission && (
+                                        <MobileCard.Footer className="tw-border-t tw-border-slate-100 tw-flex tw-justify-end tw-items-center">
+                                            <MobileCard.Actions>
+                                                {hasPermission('Power Master.Vendor - Vendor.Edit') && (
+                                                    <button type="button" className="list-action-btn btn-edit" onClick={() => navigate(`/power-master/vendor/vendor/edit/${e.id}`)}>
+                                                        <PencilSimpleIcon weight="bold" className="tw-w-4 text-white" />
+                                                    </button>
+                                                )}
+                                                {hasPermission('Power Master.Vendor - Vendor.Delete') && (
+                                                    <button
+                                                        type="button"
+                                                        className="list-action-btn btn-delete"
+                                                        onClick={() => handleDelete(e.id)}
+                                                    >
+                                                        <TrashIcon weight="duotone" className="tw-w-4" />
+                                                    </button>
+                                                )}
+                                            </MobileCard.Actions>
+                                        </MobileCard.Footer>
+                                    )}
+                                </MobileCard>
+                            ))}
+                            {sortedData.length === 0 && (
+                                <div className="tw-text-center tw-text-slate-400 tw-py-8">No records found</div>
+                            )}
+                        </div>
+
                         <div className="tw-flex tw-justify-between tw-items-center tw-mt-4">
                             <div className="tw-text-gray-600 tw-text-sm">
                                 Showing {totalEntries === 0 ? 0 : startIndex + 1} to {endIndex} of {totalEntries} entries
