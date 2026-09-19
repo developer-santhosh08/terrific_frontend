@@ -250,20 +250,17 @@ const Profile = () => {
     );
 
     return (
-        <div style={{ 
-            padding: '32px 40px', 
+        <div className="tw-p-4 md:tw-p-8 tw-relative tw-overflow-hidden" style={{ 
             backgroundColor: '#f4f7f6', 
             minHeight: '100vh', 
-            fontFamily: "'Poppins', sans-serif",
-            position: 'relative',
-            overflow: 'hidden'
+            fontFamily: "'Poppins', sans-serif"
         }}>
             {/* Dynamic Background Glows */}
             <div style={{ position: 'absolute', top: '-10%', left: '-5%', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(34,193,195,0.08) 0%, rgba(34,193,195,0) 70%)', borderRadius: '50%', pointerEvents: 'none' }} />
             <div style={{ position: 'absolute', bottom: '-10%', right: '-5%', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(34,193,195,0.06) 0%, rgba(34,193,195,0) 70%)', borderRadius: '50%', pointerEvents: 'none' }} />
 
             {/* Page Header */}
-            <div style={{ marginBottom: '32px', position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+            <div className="tw-mb-6 md:tw-mb-8 tw-relative tw-z-10 tw-flex tw-flex-col sm:tw-flex-row tw-justify-between tw-items-start sm:tw-items-end tw-gap-4">
                 <div>
                     <h4 style={{ fontSize: '28px', fontWeight: '800', color: '#0f172a', margin: '0 0 8px 0', letterSpacing: '-0.5px' }}>
                         User Profile
@@ -306,10 +303,10 @@ const Profile = () => {
                 </button>
             </div>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '32px', position: 'relative', zIndex: 1 }}>
+            <div className="tw-flex tw-flex-wrap tw-gap-6 md:tw-gap-8 tw-relative tw-z-10">
                 
                 {/* Left Column */}
-                <div style={{ flex: '1 1 360px', maxWidth: '440px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                <div className="tw-flex-1 tw-basis-full lg:tw-basis-[360px] lg:tw-max-w-[440px] tw-flex tw-flex-col tw-gap-6 md:tw-gap-8">
                     
                     {/* User Info Glass Card */}
                     <div style={{ 
@@ -502,12 +499,12 @@ const Profile = () => {
                 </div>
 
                 {/* Right Column */}
-                <div style={{ flex: '1 1 500px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                <div className="tw-flex-1 tw-basis-full lg:tw-basis-[500px] tw-flex tw-flex-col tw-gap-6 md:tw-gap-8">
                     
                     {/* Personal Information Overview Grid */}
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                         <h5 style={{ fontSize: '20px', fontWeight: '800', color: '#0f172a', margin: '0 0 -8px 0', letterSpacing: '-0.5px', paddingLeft: '4px' }}>Overview</h5>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                        <div className="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 tw-gap-5">
                             <InfoTile icon={<UserIcon size={24} weight="duotone" />} label="Username" value={userProfile.name || '-'} />
                             <InfoTile icon={<EnvelopeIcon size={24} weight="duotone" />} label="Email Address" value={userProfile.email || '-'} />
                             <InfoTile icon={<PhoneIcon size={24} weight="duotone" />} label="Mobile Number" value={userProfile.mobile_number || '-'} />
