@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Terrific Air Compressor</title>
+  <link rel="icon" type="image/png" href="/assets/images/fav-icon.png" />
+
+
+  <!-- Vendors Style-->
+  <link rel="stylesheet" href="/assets/css/vendors_css.css">
+
+  <!-- Style-->
+  <link rel="stylesheet" href="/assets/css/horizontal-menu.css">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/skin_color.css">
+  <link rel="stylesheet" href="/assets/css/color_theme.css">
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <!-- Font Awesome 5 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.5.2/dist/select2-bootstrap4.min.css"
+    rel="stylesheet">
+
+  <!-- Load Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- C3.js -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.min.css" rel="stylesheet">
+  <!-- Select2 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+  <style>
+    /* Align menu button to the right */
+    .main-menu-btn {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+    }
+
+    /* Improve menu visibility and animation */
+    #main-menu-state:checked+label+ul {
+      display: block;
+      animation: slideIn 0.3s ease-in-out;
+    }
+
+    /* Smooth slide-in animation */
+    @keyframes slideIn {
+      from {
+        transform: translateX(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* Overlay */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      z-index: 998;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100%;
+      background: white;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+      transition: 0.3s;
+      z-index: 999;
+      padding: 20px;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    /* Profile Section */
+    .profile {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .profile img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+    }
+
+    .profile h5 {
+      margin-bottom: 5px;
+    }
+
+    .profile .sign-out {
+      color: red;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    /* Close Button */
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    /* Mobile Menu Toggle */
+    .menu-toggle {
+      font-size: 24px;
+      cursor: pointer;
+      margin-left: 15px;
+      display: block;
+    }
+
+    .required::after {
+      content: " *";
+      color: red;
+    }
+  </style>
+
+  <style>
+    /* Custom menu overrides for primary blue */
+    .sm-blue a:hover,
+    .sm-blue a:active,
+    .sm-blue a:focus,
+    .sm-blue a.highlighted,
+    .sm-blue a.current,
+    .sm-blue ul a:hover,
+    .sm-blue ul a:active,
+    .sm-blue ul a:focus,
+    .sm-blue ul a.highlighted,
+    .sm-blue ul a.current {
+      background-color: #3699ff !important;
+      color: #ffffff !important;
+    }
+  </style>
+</head>
+
+<body class="layout-top-nav light-skin theme-primary fixed">
+  <div class="wrapper">
+    <div id="loader"></div>
+    <div class="art-bg">
+      <img src="/assets/images/art1.svg" alt="" class="art-img light-img">
+      <img src="/assets/images/art3.svg" alt="" class="art-img dark-img">
+    </div>
+    <div id="root"></div>
+  </div>
+
+  <!-- jQuery must lead -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    window.jQuery = window.$ = jQuery;
+  </script>
+
+  <!-- External JS from Header -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.20/c3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.16.0/d3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <!-- <script src="/assets/js/select2-custom.js"></script> -->
+
+  <!-- Vendor JS -->
+  <script src="/assets/js/vendors.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <!-- <script src="/assets/js/search.js"></script> -->
+  <!-- <script src="/assets/js/pages/chat-popup.js"></script> -->
+  <!-- <script src="/assets/vendor_components/datatable/datatables.min.js"></script> -->
+
+  <script src="/assets/vendor_components/raphael/raphael.min.js"></script>
+  <script src="/assets/vendor_components/morris.js/morris.min.js"></script>
+  <script src="/assets/vendor_components/jquery.peity/jquery.peity.js"></script>
+  <script src="/assets/vendor_components/jquery-ui/jquery-ui.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+  <script src="/assets/vendor_components/fullcalendar/fullcalendar.min.js"></script>
+  <script src="/assets/vendor_components/Flot/jquery.flot.js"></script>
+  <script src="/assets/vendor_components/Flot/jquery.flot.resize.js"></script>
+  <script src="/assets/vendor_components/Flot/jquery.flot.pie.js"></script>
+  <script src="/assets/vendor_components/Flot/jquery.flot.categories.js"></script>
+
+  <!-- Ahattrickz Admin App -->
+  <script src="/assets/js/jquery.smartmenus.js"></script>
+  <script src="/assets/js/menus.js"></script>
+  <script src="/assets/js/template.js"></script>
+  <script src="/assets/js/demo.js"></script>
+
+  <!-- React Entry -->
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
+</html>

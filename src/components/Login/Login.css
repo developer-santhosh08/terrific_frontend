@@ -1,0 +1,343 @@
+/* ════════════════════════════════════════
+   Login Page
+   ════════════════════════════════════════ */
+
+/* ── Page background ── */
+.lp-bg {
+    min-height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-bg, #22C1C3);
+    --lp-purple-a: var(--primary-color, #22C1C3);
+    --lp-purple-b: var(--primary-color, #22C1C3);
+    --lp-purple-c: var(--primary-color, #22C1C3);
+    padding: 28px 20px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ── Floating background shapes ── */
+.lp-shape {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1.5px solid rgba(255, 255, 255, 0.13);
+    animation: lpFloat 10s ease-in-out infinite;
+    pointer-events: none;
+    will-change: transform, opacity;
+}
+
+.lp-shape-1 { width: 160px; height: 160px; top: 8%;   left: 5%;   animation-duration: 11s; animation-delay: 0s;   }
+.lp-shape-2 { width: 90px;  height: 90px;  top: 65%;  left: 3%;   animation-duration: 9s;  animation-delay: -3s;  }
+.lp-shape-3 { width: 200px; height: 200px; top: 15%;  right: 4%;  animation-duration: 13s; animation-delay: -5s;  border-radius: 38%; }
+.lp-shape-4 { width: 70px;  height: 70px;  bottom: 12%; right: 8%; animation-duration: 8s;  animation-delay: -2s;  }
+.lp-shape-5 { width: 50px;  height: 50px;  top: 50%;  right: 12%; animation-duration: 7s;  animation-delay: -6s;  border-radius: 20%; }
+.lp-shape-6 { width: 120px; height: 120px; bottom: 18%; left: 10%; animation-duration: 12s; animation-delay: -4s; border-radius: 35%; }
+
+@keyframes lpFloat {
+    0%,100% { transform: translateY(0px) rotate(0deg);   opacity: 0.7; }
+    33%      { transform: translateY(-18px) rotate(5deg); opacity: 1;   }
+    66%      { transform: translateY(-8px) rotate(-4deg); opacity: 0.8; }
+}
+
+/* ── Dot-grid decorations (like reference image) ── */
+.lp-dot-grid {
+    position: absolute;
+    pointer-events: none;
+    background-image: radial-gradient(rgba(255,255,255,0.35) 1.8px, transparent 1.8px);
+    background-size: 20px 20px;
+}
+.lp-dot-grid-tr { width: 140px; height: 140px; top: 4%;    right: 3%;  }
+.lp-dot-grid-bl { width: 120px; height: 120px; bottom: 5%; left: 3%;   }
+.lp-dot-grid-tl { width: 100px; height: 100px; top: 5%;    left: 3%;   opacity: 0.6; }
+
+/* ── Center white card ── */
+.lp-card {
+    position: relative;
+    z-index: 1;
+    background: #ffffff;
+    border-radius: 30px;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 1280px;
+    min-height: 620px;
+    padding: 44px 44px 44px 54px;
+    gap: 36px;
+    box-sizing: border-box;
+}
+
+/* ── Illustration pane ── */
+.lp-illus {
+    flex: 1.4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.lp-illus-img {
+    width: 100%;
+    max-width: 520px;
+    height: auto;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
+.lp-illus-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #4f46e5;
+    margin: 18px 0 5px;
+    letter-spacing: 0.01em;
+}
+
+.lp-illus-sub {
+    font-size: 13.5px;
+    color: #9ca3af;
+    margin: 0;
+}
+
+/* ── Login form card — same purple tone as background ── */
+.lp-form-card {
+    flex: 0 0 400px;
+    background: var(--primary-bg, #22C1C3);
+    border-radius: 24px;
+    padding: 46px 40px 42px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: none;
+    box-sizing: border-box;
+}
+
+/* Logo */
+.lp-logo-wrap {
+    background: rgba(255, 255, 255, 0.14);
+    border-radius: 14px;
+    padding: 10px 20px;
+    margin-bottom: 18px;
+}
+
+.lp-logo-img {
+    max-height: 46px;
+    width: auto;
+    display: block;
+    filter: brightness(0) invert(1);
+}
+
+.lp-form-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.93);
+    margin: 0 0 28px;
+    text-align: center;
+    letter-spacing: 0.01em;
+}
+
+/* Form */
+.lp-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.lp-input {
+    width: 100%;
+    padding: 13px 20px;
+    border-radius: 50px;
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    background: #ffffff;
+    color: #000000;
+    font-size: 14px;
+    outline: none;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+/* Override browser autofill white background */
+.lp-input:-webkit-autofill,
+.lp-input:-webkit-autofill:hover,
+.lp-input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 100px #ffffff inset !important;
+    -webkit-text-fill-color: #000000 !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+    caret-color: #000000;
+}
+
+/* Password field with eye toggle */
+.lp-pw-wrap {
+    position: relative;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.lp-input--pw {
+    margin-bottom: 0 !important;
+    padding-right: 48px;
+}
+
+.lp-eye-btn {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--primary-color, #23BDC1);
+    padding: 0;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s;
+}
+
+.lp-eye-btn:hover {
+    color: var(--primary-color, #1aa8aa);
+}
+
+.lp-input::placeholder {
+    color: rgba(0, 0, 0, 0.4);
+}
+
+.lp-input:focus {
+    border-color: var(--primary-color, #23BDC1);
+    background: #ffffff;
+}
+
+/* Error message */
+.lp-error {
+    width: 100%;
+    background: rgba(255, 80, 80, 0.18);
+    border: 1px solid rgba(255, 120, 120, 0.4);
+    color: #fecaca;
+    font-size: 13px;
+    border-radius: 10px;
+    padding: 9px 14px;
+    margin-bottom: 12px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+/* Loading spinner inside button */
+.lp-spinner {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2.5px solid rgba(34, 193, 195, 0.3);
+    border-top-color: var(--primary-color, #22C1C3);
+    border-radius: 50%;
+    animation: lpSpin 0.7s linear infinite;
+    vertical-align: middle;
+    will-change: transform;
+}
+
+@keyframes lpSpin {
+    to { transform: rotate(360deg); }
+}
+
+.lp-btn:disabled {
+    opacity: 0.75;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.lp-forgot-row {
+    text-align: right;
+    margin-bottom: 22px;
+}
+
+.lp-forgot-link {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 12.5px;
+    text-decoration: none;
+    transition: color 0.15s;
+}
+.lp-forgot-link:hover { color: #ffffff; }
+
+/* Login button */
+.lp-btn {
+    width: 100%;
+    padding: 13px;
+    border-radius: 50px;
+    border: none;
+    background: #ffffff;
+    color: var(--primary-color, #22C1C3);
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.18);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+    margin-bottom: 20px;
+    z-index: 0;
+}
+
+/* ripple fill on hover */
+.lp-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--primary-bg, linear-gradient(135deg, #22C1C3, #1aa8aa));
+    border-radius: inherit;
+    opacity: 0;
+    transform: scaleX(0.6);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: -1;
+}
+
+.lp-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: none;
+    color: #ffffff;
+}
+
+.lp-btn:hover::before {
+    opacity: 1;
+    transform: scaleX(1);
+}
+
+.lp-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+.lp-create-row { text-align: center; }
+
+.lp-create-link {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 13px;
+    text-decoration: none;
+    transition: color 0.15s;
+}
+.lp-create-link:hover { color: #ffffff; }
+
+/* ── Responsive ── */
+@media (max-width: 1000px) {
+    .lp-card { padding: 32px 28px; gap: 24px; }
+    .lp-form-card { flex: 0 0 340px; }
+}
+
+@media (max-width: 768px) {
+    .lp-illus { display: none; }
+    .lp-card {
+        justify-content: center;
+        padding: 28px 20px;
+        min-height: unset;
+    }
+    .lp-form-card { flex: unset; width: 100%; max-width: 360px; }
+}
+
+@media (max-width: 480px) {
+    .lp-bg   { padding: 16px; }
+    .lp-card { border-radius: 20px; }
+}

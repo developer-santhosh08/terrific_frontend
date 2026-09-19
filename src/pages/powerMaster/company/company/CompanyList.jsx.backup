@@ -1,0 +1,196 @@
+import { useTableControls } from '../../../../hooks/useTableControls';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { PencilSimpleIcon, PlusIcon, TrashIcon } from '@phosphor-icons/react';
+import TableSortIcon from '../../../../components/TableSortIcon';
+import DeletePopup from '../../../../components/Popup/DeletePopup.jsx';
+
+const CompanyList = () => {
+
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+    const handleSort = (key) => {
+        let direction = 'asc';
+        if (sortConfig.key === key && sortConfig.direction === 'asc') direction = 'desc';
+        setSortConfig({ key, direction });
+    };
+
+    const navigate = useNavigate();
+    const [showDeletePopup, setShowDeletePopup] = useState(false);
+    const [pendingDeleteId, setPendingDeleteId] = useState(null);
+    const [companies, setCompanies] = useState([
+        { id: 1, company: 'TERRIFIC TECHNOLOGIES', city: 'THIRUPUR', address1: '62/1', address2: 'Chitralaya Nagar', mobile: '9944680677', status: 'Active' },
+        { id: 2, company: 'OMEGA INDUSTRIES', city: 'COIMBATORE', address1: '45/A', address2: 'Peelamedu', mobile: '9876543210', status: 'Active' },
+    ]);
+
+    const sortedCompanies = [...companies].sort((a, b) => {
+        if (sortConfig.key) {
+            if (a[sortConfig.key] < b[sortConfig.key]) {
+                return sortConfig.direction === 'asc' ? -1 : 1;
+            }
+            if (a[sortConfig.key] > b[sortConfig.key]) {
+                return sortConfig.direction === 'asc' ? 1 : -1;
+            }
+        }
+        return 0;
+    });
+
+    const handleDelete = (id) => {
+        setPendingDeleteId(id);
+        setShowDeletePopup(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        try {
+            await fetch(`/api/master/company/${pendingDeleteId}`, { method: 'DELETE' });
+            setCompanies(prev => prev.filter(d => d.id !== pendingDeleteId));
+        } catch {
+            // silently ignore
+        } finally {
+            setShowDeletePopup(false);
+            setPendingDeleteId(null);
+        }
+    };
+
+    const {
+        entriesPerPage,
+        setEntriesPerPage,
+        searchQuery,
+        setSearchQuery,
+        currentPage,
+        setCurrentPage,
+        totalPages,
+        paginatedData: sortedData,
+        startIndex,
+        endIndex,
+        totalEntries
+    } = useTableControls(companies);
+
+    return (
+        <section className="content">
+            <div className="container-fluid">
+                <div className="card">
+                    <div className="card-header with-border d-flex justify-content-between align-items-center">
+                        <h3 className="card-title">Company Details</h3>
+                        <button
+                            className="btn-create"
+                            onClick={() => navigate('/power-master/company/add')}
+                        >
+                            <PlusIcon weight="duotone" className="tw-w-4" />
+                            Create New
+                        </button>
+                    </div>
+                    <div className="card-body">
+                        {/* Top controls: Show entries and Search */}
+                        <div className="list-top-bar">
+                            <div className="d-flex align-items-center">
+                                <span>Show</span>
+                                <select 
+                                    className="form-select form-select-sm mx-2 tw-w-20 tw-border-slate-300"
+                                    value={entriesPerPage}
+                                    onChange={(e) => setEntriesPerPage(e.target.value)}
+                                >
+                                    <option value="10">10</option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                </select>
+                                <span>entries</span>
+                            </div>
+                            <div className="d-flex align-items-center">
+                                <span className="me-2">Search:</span>
+                                <input 
+                                    type="text" 
+                                    className="form-control form-control-sm tw-border-slate-300" 
+                                    style={{ width: 'auto' }} 
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="table-responsive">
+                            <table className="table table-bordered table-striped no-margin">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th onClick={() => handleSort('company')} className="tw-cursor-pointer tw-select-none">Company <TableSortIcon direction={sortConfig.key === 'company' ? sortConfig.direction : null} /></th>
+                                        <th onClick={() => handleSort('city')} className="tw-cursor-pointer tw-select-none">City <TableSortIcon direction={sortConfig.key === 'city' ? sortConfig.direction : null} /></th>
+                                        <th onClick={() => handleSort('address1')} className="tw-cursor-pointer tw-select-none">Address1 <TableSortIcon direction={sortConfig.key === 'address1' ? sortConfig.direction : null} /></th>
+                                        <th onClick={() => handleSort('address2')} className="tw-cursor-pointer tw-select-none">Address2 <TableSortIcon direction={sortConfig.key === 'address2' ? sortConfig.direction : null} /></th>
+                                        <th onClick={() => handleSort('mobile')} className="tw-cursor-pointer tw-select-none">Mobile <TableSortIcon direction={sortConfig.key === 'mobile' ? sortConfig.direction : null} /></th>
+                                        <th onClick={() => handleSort('status')} className="tw-cursor-pointer tw-select-none">Status <TableSortIcon direction={sortConfig.key === 'status' ? sortConfig.direction : null} /></th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {sortedCompanies.map((c, index) => (
+                                        <tr key={c.id}>
+                                            <td>{index + 1}</td>
+                                            <td>{c.company}</td>
+                                            <td>{c.city}</td>
+                                            <td>{c.address1}</td>
+                                            <td>{c.address2}</td>
+                                            <td>{c.mobile}</td>
+                                            <td>
+                                                <span className="badge badge-success" style={{ backgroundColor: '#28a745' }}>
+                                                    {c.status}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div className="tw-flex tw-gap-2">
+                                                    <button type="button" className="list-action-btn btn-edit" onClick={() => navigate(`/power-master/company/edit/${c.id}`)}>
+                                                        <PencilSimpleIcon weight="duotone" className="tw-w-4" />
+                                                    </button>
+                                                    {/* <button type="button" className="list-action-btn btn-settings">
+                                                        <GearSixIcon weight="duotone" className="tw-w-4" />
+                                                    </button> */}
+                                                    <button
+                                                        type="button"
+                                                        className="list-action-btn btn-delete"
+                                                        onClick={() => handleDelete(c.id)}
+                                                    >
+                                                        <TrashIcon weight="duotone" className="tw-w-4" />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Bottom controls: Showing entries and Pagination */}
+                        <div className="d-flex justify-content-between align-items-center mt-4">
+                            <div className="tw-text-xs tw-text-slate-500">
+                                Showing 1 to {companies.length} of {companies.length} entries
+                            </div>
+                            <div className="tw-flex tw-items-center tw-gap-3 tw-text-sm">
+                                <span 
+                                    className={`tw-cursor-pointer ${currentPage === 1 ? 'tw-text-slate-300' : 'tw-text-slate-500 hover:tw-text-blue-600'}`}
+                                    onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
+                                >
+                                    Previous
+                                </span>
+                                <span className="tw-bg-blue-600 tw-text-white tw-px-3 tw-py-1 tw-rounded-sm tw-cursor-pointer">
+                                    {currentPage}
+                                </span>
+                                <span 
+                                    className={`tw-cursor-pointer ${currentPage === totalPages ? 'tw-text-slate-300' : 'tw-text-slate-500 hover:tw-text-blue-600'}`}
+                                    onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)}
+                                >
+                                    Next
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <DeletePopup
+                isOpen={showDeletePopup}
+                onClose={() => { setShowDeletePopup(false); setPendingDeleteId(null); }}
+                onConfirm={handleConfirmDelete}
+            />
+        </section>
+    );
+};
+
+export default CompanyList;

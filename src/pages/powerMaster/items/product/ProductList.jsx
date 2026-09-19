@@ -1,0 +1,256 @@
+import { useTableControls } from '../../../../hooks/useTableControls';
+import { useLoader } from '../../../../context/LoaderContext';
+import Pagination from '../../../../components/Pagination';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { PencilSimpleIcon, PlusIcon, TrashIcon } from '@phosphor-icons/react';
+import TableSortIcon from '../../../../components/TableSortIcon';
+import DeletePopup from '../../../../components/Popup/DeletePopup.jsx';
+import { apiFetch } from '../../../../lib/api';
+import { usePermissions } from '../../../../context/PermissionContext';
+
+const ProductList = () => {
+    const { hasPermission } = usePermissions();
+    const hasActionPermission = hasPermission('Power Master.Items - Product.Edit') || hasPermission('Power Master.Items - Product.Delete');
+    
+
+    const navigate = useNavigate();
+    const [showDeletePopup, setShowDeletePopup] = useState(false);
+    const [pendingDeleteId, setPendingDeleteId] = useState(null);
+    const [data, setData] = useState([]);
+    const { loading, setLoading } = useLoader();
+
+    useEffect(() => {
+        const fetchData = async () => {
+        setLoading(true);
+        try {
+                const fetchOptions = { cache: 'no-store' };
+                const [catRes, subCatRes, modelRes, prodRes] = await Promise.all([
+                    fetch(import.meta.env.VITE_API_BASE_URL + '/api/master/productCategory', fetchOptions),
+                    fetch(import.meta.env.VITE_API_BASE_URL + '/api/master/productSubCategory', fetchOptions),
+                    fetch(import.meta.env.VITE_API_BASE_URL + '/api/master/productModel', fetchOptions),
+                    fetch(import.meta.env.VITE_API_BASE_URL + '/api/master/product', fetchOptions),
+                ]);
+
+                const [catResult, subCatResult, modelResult, prodResult] = await Promise.all([
+                    catRes.json(),
+                    subCatRes.json(),
+                    modelRes.json(),
+                    prodRes.json()
+                ]);
+
+                let catMap = {};
+                if (catResult.status && catResult.data) {
+                    catResult.data.forEach(item => catMap[item.id] = item.name);
+                }
+
+                let subCatMap = {};
+                if (subCatResult.status && subCatResult.data) {
+                    subCatResult.data.forEach(item => subCatMap[item.id] = item.name);
+                }
+
+                let modelMap = {};
+                if (modelResult.status && modelResult.data) {
+                    modelResult.data.forEach(item => modelMap[item.id] = item.name);
+                }
+
+                if (prodResult.status && prodResult.data) {
+                    const formattedData = prodResult.data.map(item => ({
+                        id: item.id,
+                        name: item.name,
+                        model: modelMap[item.product_model_id] || 'Unknown',
+                        category: catMap[item.product_category_id] || 'Unknown',
+                        subcategory: subCatMap[item.product_sub_category_id] || 'Unknown',
+                        status: item.status === 1 ? 'Active' : 'Inactive'
+                    })).sort((a, b) => b.id - a.id);
+                    setData(formattedData);
+                }
+            } catch (error) {
+                console.error("Error fetching product data:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    const handleDelete = (id) => {
+        setPendingDeleteId(id);
+        setShowDeletePopup(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/master/product/${pendingDeleteId}`, { method: 'DELETE' });
+                if (!response) return;
+                const result = await response.json();
+            if (result.status) {
+                setData(prev => prev.filter(d => d.id !== pendingDeleteId));
+            } else {
+                console.error("Failed to delete product:", result.message);
+                alert(result.message || 'Failed to delete product');
+            }
+        } catch (error) {
+            console.error("Error deleting product:", error);
+            alert('An error occurred while deleting the product');
+        } finally {
+            setShowDeletePopup(false);
+            setPendingDeleteId(null);
+        }
+    };
+
+    const {
+        sortConfig,
+        handleSort,
+        searchQuery,
+        setSearchQuery,
+        entriesPerPage,
+        setEntriesPerPage,
+        currentPage,
+        setCurrentPage,
+        totalPages,
+        startIndex,
+        endIndex,
+        totalEntries,
+        paginatedData: sortedData
+    } = useTableControls(data);
+
+    return (
+        <section className="content">
+            <div className="container-fluid">
+                <div className="card">
+                    <div className="card-header with-border d-flex justify-content-between align-items-center">
+                        <h3 className="card-title">Product Details</h3>
+                        <div className="d-flex align-items-center tw-gap-4">
+                            {hasPermission('Power Master.Items - Product.Add') && (
+                                <button
+                                    className="btn-create d-flex align-items-center tw-gap-1"
+                                    onClick={() => navigate('/power-master/items/product/add')}
+                                >
+                                    <PlusIcon weight="bold" className="tw-w-4 text-white" />
+                                    <span className="text-white">Create New</span>
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                    <div className="card-body">
+                        {/* Top controls: Show entries and Search */}
+                        <div className="list-top-bar">
+                            
+                            <div className="d-flex align-items-center">
+                                <span className="me-2">Show</span>
+                                <select 
+                                    className="form-select form-select-sm tw-border-slate-300 me-2" 
+                                    style={{ width: '70px' }}
+                                    value={entriesPerPage}
+                                    onChange={(e) => setEntriesPerPage(Number(e.target.value))}
+                                >
+                                    <option value="10">10</option>
+                                    <option value="25">25</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>
+                                <span>entries</span>
+                            </div>
+                            <div className="d-flex align-items-center">
+                                <span className="me-2">Search:</span>
+                                <input
+                                    type="text"
+                                    className="form-control form-control-sm tw-border-slate-300"
+                                    style={{ width: 'auto' }}
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="table-responsive">
+                            <table className="table table-bordered table-striped no-margin">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th onClick={() => handleSort('name')} className="tw-cursor-pointer tw-select-none">Name <TableSortIcon direction={sortConfig.key === 'name' ? sortConfig.direction : null} /></th>
+                                        <th onClick={() => handleSort('model')} className="tw-cursor-pointer tw-select-none">Model <TableSortIcon direction={sortConfig.key === 'model' ? sortConfig.direction : null} /></th>
+                                        <th onClick={() => handleSort('category')} className="tw-cursor-pointer tw-select-none">Category <TableSortIcon direction={sortConfig.key === 'category' ? sortConfig.direction : null} /></th>
+                                        <th onClick={() => handleSort('subcategory')} className="tw-cursor-pointer tw-select-none">Subcategory <TableSortIcon direction={sortConfig.key === 'subcategory' ? sortConfig.direction : null} /></th>
+                                        <th onClick={() => handleSort('status')} className="tw-cursor-pointer tw-select-none">Status <TableSortIcon direction={sortConfig.key === 'status' ? sortConfig.direction : null} /></th>
+                                        {hasActionPermission && <th>Action</th>}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {loading ? (
+                                        <tr>
+                                            <td colSpan="7" className="text-center tw-py-4">Loading...</td>
+                                        </tr>
+                                    ) : (
+                                        sortedData.map((e, index) => (
+                                            <tr key={index}>
+                                                <td className="align-middle">{startIndex + index}</td>
+                                                <td className="align-middle">{e.name}</td>
+                                                <td className="align-middle">{e.model}</td>
+                                                <td className="align-middle">{e.category}</td>
+                                                <td className="align-middle">{e.subcategory}</td>
+                                                <td className="align-middle">
+                                                    <span className={`badge ${e.status === 'Active' ? 'bg-success' : 'bg-danger'}`}>
+                                                        {e.status}
+                                                    </span>
+                                                </td>
+                                                {hasActionPermission && (
+<td className="align-middle">
+                                                    <div className="tw-flex tw-gap-2">
+                                                        {hasPermission('Power Master.Items - Product.Edit') && (
+<button type="button" className="list-action-btn btn-edit" onClick={() => navigate(`/power-master/items/product/edit/${e.id}`)}>
+                                                            <PencilSimpleIcon weight="bold" className="tw-w-4 text-white" />
+                                                        </button>
+)}
+                                                        {hasPermission('Power Master.Items - Product.Delete') && (
+<button
+                                                            type="button"
+                                                            className="list-action-btn btn-delete"
+                                                            onClick={() => handleDelete(e.id)}
+                                                        >
+                                                            <TrashIcon weight="duotone" className="tw-w-4" />
+                                                        </button>
+)}
+                                                    </div>
+                                                </td>
+)}
+                                            </tr>
+                                        ))
+                                    )}
+                                    {!loading && sortedData.length === 0 && (
+                                        <tr>
+                                            <td colSpan={hasActionPermission ? 7 : 6} className="text-center tw-py-4">No data available in table</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div className="tw-flex tw-justify-between tw-items-center tw-mt-4">
+                            <div className="tw-text-gray-600 tw-text-sm">
+                                Showing {totalEntries === 0 ? 0 : startIndex + 1} to {endIndex} of {totalEntries} entries
+                            </div>
+                            <Pagination 
+                                currentPage={currentPage} 
+                                totalPages={totalPages} 
+                                onPageChange={setCurrentPage} 
+                            />
+                        </div>
+
+                        
+                        
+
+                    </div>
+                </div>
+            </div>
+            <DeletePopup
+                isOpen={showDeletePopup}
+                onClose={() => { setShowDeletePopup(false); setPendingDeleteId(null); }}
+                onConfirm={handleConfirmDelete}
+            />
+        </section>
+    );
+};
+
+export default ProductList;
