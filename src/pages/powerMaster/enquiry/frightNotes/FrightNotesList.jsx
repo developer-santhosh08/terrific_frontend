@@ -7,6 +7,7 @@ import { PencilSimpleIcon, PlusIcon, TrashIcon } from '@phosphor-icons/react';
 import TableSortIcon from '../../../../components/TableSortIcon';
 import DeletePopup from '../../../../components/Popup/DeletePopup.jsx';
 import { usePermissions } from '../../../../context/PermissionContext';
+import MobileCard from '../../../../components/common/MobileCard';
 
 
 const FrightNotesList = () => {
@@ -137,7 +138,7 @@ const FrightNotesList = () => {
                             </div>
                         </div>
 
-                        <div className="table-responsive">
+                        <div className="table-responsive tw-hidden md:tw-block">
                             <table className="table table-bordered table-striped no-margin">
                                 <thead>
                                     <tr>
@@ -186,6 +187,48 @@ const FrightNotesList = () => {
                                     )}
                                 </tbody>
                             </table>
+                        </div>
+
+                        {/* Mobile View */}
+                        <div className="tw-block md:tw-hidden tw-mt-4">
+                            {sortedData.map((e, index) => (
+                                <MobileCard key={index}>
+                                    <MobileCard.Header label="#" value={startIndex + index} />
+                                    <MobileCard.Body>
+                                        <div className="tw-grid tw-grid-cols-2 tw-gap-3">
+                                            <MobileCard.Field label="Name" value={e.name} />
+                                            <MobileCard.Field label="Status" value={
+                                                <span className="badge badge-success" style={{ backgroundColor: e.status === 1 ? '#28a745' : '#dc3545' }}>
+                                                    {e.status_label || (e.status === 1 ? 'Active' : 'Inactive')}
+                                                </span>
+                                            } />
+                                        </div>
+                                    </MobileCard.Body>
+                                    {hasActionPermission && (
+                                        <MobileCard.Footer className="tw-border-t tw-border-slate-100 tw-flex tw-justify-end tw-items-center">
+                                            <MobileCard.Actions>
+                                                {hasPermission('Power Master.Enquiry Master - Fright Notes.Edit') && (
+                                                    <button type="button" className="list-action-btn btn-edit" onClick={() => navigate(`/power-master/fright-notes/edit/${e.id}`)}>
+                                                        <PencilSimpleIcon weight="duotone" className="tw-w-4" />
+                                                    </button>
+                                                )}
+                                                {hasPermission('Power Master.Enquiry Master - Fright Notes.Delete') && (
+                                                    <button
+                                                        type="button"
+                                                        className="list-action-btn btn-delete"
+                                                        onClick={() => handleDelete(e.id)}
+                                                    >
+                                                        <TrashIcon weight="duotone" className="tw-w-4" />
+                                                    </button>
+                                                )}
+                                            </MobileCard.Actions>
+                                        </MobileCard.Footer>
+                                    )}
+                                </MobileCard>
+                            ))}
+                            {sortedData.length === 0 && (
+                                <div className="tw-text-center tw-text-slate-400 tw-py-8">No records found</div>
+                            )}
                         </div>
                         <div className="tw-flex tw-justify-between tw-items-center tw-mt-4">
                             <div className="tw-text-gray-600 tw-text-sm">

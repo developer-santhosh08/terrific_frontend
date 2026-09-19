@@ -7,7 +7,7 @@ import { PencilSimpleIcon, PlusIcon, TrashIcon } from '@phosphor-icons/react';
 import TableSortIcon from '../../../../components/TableSortIcon';
 import DeletePopup from '../../../../components/Popup/DeletePopup.jsx';
 import { usePermissions } from '../../../../context/PermissionContext';
-
+import MobileCard from '../../../../components/common/MobileCard';
 const EmployeeList = () => {
     const { hasPermission } = usePermissions();
     const hasActionPermission = hasPermission('Power Master.Employee - Employee.Edit') || hasPermission('Power Master.Employee - Employee.Delete');
@@ -161,7 +161,7 @@ const EmployeeList = () => {
                             </div>
                         </div>
 
-                        <div className="table-responsive">
+                        <div className="table-responsive tw-hidden md:tw-block">
                             <table className="table table-bordered table-striped no-margin">
                                 <thead>
                                     <tr>
@@ -227,6 +227,55 @@ const EmployeeList = () => {
                                     )}
                                 </tbody>
                             </table>
+                        </div>
+
+                        {/* Mobile View */}
+                        <div className="tw-block md:tw-hidden tw-mt-4">
+                            {loading ? (
+                                <div className="text-center tw-py-4 tw-text-slate-500">Loading...</div>
+                            ) : sortedEmployees.length > 0 ? (
+                                sortedEmployees.map((e, index) => (
+                                    <MobileCard key={e.id}>
+                                        <MobileCard.Header label="#" value={startIndex + index} />
+                                        <MobileCard.Body>
+                                            <div className="tw-grid tw-grid-cols-2 tw-gap-3">
+                                                <MobileCard.Field label="Emp No" value={e.empNo} />
+                                                <MobileCard.Field label="Emp Name" value={e.empName} />
+                                                <MobileCard.Field label="Department" value={e.department} />
+                                                <MobileCard.Field label="Designation" value={e.designation} />
+                                                <MobileCard.Field label="Mobile" value={e.mobile} />
+                                                <MobileCard.Field label="Status" value={
+                                                    <span className={`badge ${e.status === 'Active' ? 'badge-success' : 'badge-danger'}`} style={{ backgroundColor: e.status === 'Active' ? '#28a745' : '#dc3545' }}>
+                                                        {e.status}
+                                                    </span>
+                                                } />
+                                            </div>
+                                        </MobileCard.Body>
+                                        {hasActionPermission && (
+                                            <MobileCard.Footer className="tw-border-t tw-border-slate-100 tw-flex tw-justify-end tw-items-center">
+                                                <MobileCard.Actions>
+                                                    {hasPermission('Power Master.Employee - Employee.Edit') && (
+                                                        <button type="button" className="list-action-btn btn-edit" onClick={() => navigate(`/power-master/employee/employee/edit/${e.id}`)}>
+                                                            <PencilSimpleIcon weight="duotone" className="tw-w-4" />
+                                                        </button>
+                                                    )}
+                                                    {hasPermission('Power Master.Employee - Employee.Delete') && (
+                                                        <button
+                                                            type="button"
+                                                            className="list-action-btn btn-delete"
+                                                            onClick={() => handleDelete(e.id)}
+                                                        >
+                                                            <TrashIcon weight="duotone" className="tw-w-4" />
+                                                        </button>
+                                                    )}
+                                                </MobileCard.Actions>
+                                            </MobileCard.Footer>
+                                        )}
+                                    </MobileCard>
+                                ))
+                            ) : (
+                                <div className="tw-text-center tw-text-slate-400 tw-py-8">No data available in table</div>
+                            )}
                         </div>
                         <div className="tw-flex tw-justify-between tw-items-center tw-mt-4">
                             <div className="tw-text-gray-600 tw-text-sm">

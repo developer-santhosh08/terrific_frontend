@@ -7,7 +7,7 @@ import { PencilSimple as PencilSimpleIcon, Plus as PlusIcon } from '@phosphor-ic
 import TableSortIcon from '../../../../components/TableSortIcon';
 import { apiFetch } from '../../../../lib/api';
 import { usePermissions } from '../../../../context/PermissionContext';
-
+import MobileCard from '../../../../components/common/MobileCard';
 class ErrorBoundary extends React.Component {
     constructor(props) {
         super(props);
@@ -142,7 +142,7 @@ const ProductInspectionListContent = () => {
                             </div>
                         </div>
 
-                        <div className="table-responsive">
+                        <div className="table-responsive tw-hidden md:tw-block">
                             <table className="table table-bordered table-striped no-margin">
                                 <thead>
                                     <tr>
@@ -190,6 +190,43 @@ const ProductInspectionListContent = () => {
                                     )}
                                 </tbody>
                             </table>
+                        </div>
+
+                        {/* Mobile View */}
+                        <div className="tw-block md:tw-hidden tw-mt-4">
+                            {loading ? (
+                                <div className="tw-text-center tw-py-4">Loading...</div>
+                            ) : sortedData.length > 0 ? (
+                                sortedData.map((e, index) => (
+                                    <MobileCard key={e.id}>
+                                        <MobileCard.Header label="#" value={startIndex + index} />
+                                        <MobileCard.Body>
+                                            <div className="tw-grid tw-grid-cols-2 tw-gap-3">
+                                                <MobileCard.Field label="Product" value={e.product} />
+                                                <MobileCard.Field label="No.Question" value={e.noQuestion} />
+                                                <MobileCard.Field label="Status" value={
+                                                    <span className={`badge ${e.status === 'Active' ? 'bg-success' : 'bg-danger'}`}>
+                                                        {e.status}
+                                                    </span>
+                                                } />
+                                            </div>
+                                        </MobileCard.Body>
+                                        {hasActionPermission && (
+                                            <MobileCard.Footer className="tw-border-t tw-border-slate-100 tw-flex tw-justify-end tw-items-center">
+                                                <MobileCard.Actions>
+                                                    {hasPermission('Power Master.Items.Edit') && (
+                                                        <button type="button" className="list-action-btn btn-edit" onClick={() => navigate(`/power-master/items/product-inspection-mapping/edit/${e.id}`)}>
+                                                            <PencilSimpleIcon weight="duotone" className="tw-w-4" />
+                                                        </button>
+                                                    )}
+                                                </MobileCard.Actions>
+                                            </MobileCard.Footer>
+                                        )}
+                                    </MobileCard>
+                                ))
+                            ) : (
+                                <div className="tw-text-center tw-text-slate-400 tw-py-8">No data available in table</div>
+                            )}
                         </div>
                         <div className="tw-flex tw-justify-between tw-items-center tw-mt-4">
                             <div className="tw-text-gray-600 tw-text-sm">

@@ -8,7 +8,7 @@ import TableSortIcon from '../../../../components/TableSortIcon';
 import DeletePopup from '../../../../components/Popup/DeletePopup.jsx';
 import { apiFetch } from '../../../../lib/api';
 import { usePermissions } from '../../../../context/PermissionContext';
-
+import MobileCard from '../../../../components/common/MobileCard';
 const StockLocationList = () => {
     const { hasPermission } = usePermissions();
     const hasActionPermission = hasPermission('Power Master.Items.Edit') || hasPermission('Power Master.Items.Delete');
@@ -104,7 +104,7 @@ const StockLocationList = () => {
                             </div>
                         </div>
 
-                        <div className="table-responsive">
+                        <div className="table-responsive tw-hidden md:tw-block">
                             <table className="table table-bordered table-striped no-margin">
                                 <thead>
                                     <tr>
@@ -159,6 +159,51 @@ const StockLocationList = () => {
                                     )}
                                 </tbody>
                             </table>
+                        </div>
+
+                        {/* Mobile View */}
+                        <div className="tw-block md:tw-hidden tw-mt-4">
+                            {sortedData.map((e, index) => (
+                                <MobileCard key={index}>
+                                    <MobileCard.Header label="#" value={startIndex + index} />
+                                    <MobileCard.Body>
+                                        <div className="tw-grid tw-grid-cols-2 tw-gap-3">
+                                            <MobileCard.Field label="Stock Location Name" value={e.stockLocationName} />
+                                            <MobileCard.Field label="Damage" value={e.damage} />
+                                            <MobileCard.Field label="Address" value={e.address} />
+                                            <MobileCard.Field label="City" value={e.city} />
+                                            <MobileCard.Field label="Status" value={
+                                                <span className={`badge ${e.status === 'Active' ? 'bg-success' : 'bg-danger'}`}>
+                                                    {e.status}
+                                                </span>
+                                            } />
+                                        </div>
+                                    </MobileCard.Body>
+                                    {hasActionPermission && (
+                                        <MobileCard.Footer className="tw-border-t tw-border-slate-100 tw-flex tw-justify-end tw-items-center">
+                                            <MobileCard.Actions>
+                                                {hasPermission('Power Master.Items.Edit') && (
+                                                    <button type="button" className="list-action-btn btn-edit" onClick={() => navigate(`/power-master/items/stock-location/edit/${e.id}`)}>
+                                                        <PencilSimpleIcon weight="duotone" className="tw-w-4" />
+                                                    </button>
+                                                )}
+                                                {hasPermission('Power Master.Items.Delete') && (
+                                                    <button
+                                                        type="button"
+                                                        className="list-action-btn btn-delete"
+                                                        onClick={() => handleDelete(e.id)}
+                                                    >
+                                                        <TrashIcon weight="duotone" className="tw-w-4" />
+                                                    </button>
+                                                )}
+                                            </MobileCard.Actions>
+                                        </MobileCard.Footer>
+                                    )}
+                                </MobileCard>
+                            ))}
+                            {sortedData.length === 0 && (
+                                <div className="tw-text-center tw-text-slate-400 tw-py-8">No data available in table</div>
+                            )}
                         </div>
                         <div className="tw-flex tw-justify-between tw-items-center tw-mt-4">
                             <div className="tw-text-gray-600 tw-text-sm">

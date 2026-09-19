@@ -7,7 +7,7 @@ import { PencilSimpleIcon, PlusIcon, TrashIcon } from '@phosphor-icons/react';
 import TableSortIcon from '../../../../components/TableSortIcon';
 import DeletePopup from '../../../../components/Popup/DeletePopup.jsx';
 import { usePermissions } from '../../../../context/PermissionContext';
-
+import MobileCard from '../../../../components/common/MobileCard';
 
 const CityList = () => {
     const { hasPermission } = usePermissions();
@@ -156,7 +156,7 @@ const CityList = () => {
                             </div>
                         </div>
 
-                        <div className="table-responsive">
+                        <div className="table-responsive tw-hidden md:tw-block">
                             <table className="table table-bordered table-striped no-margin">
                                 <thead>
                                     <tr>
@@ -202,6 +202,49 @@ const CityList = () => {
                                     ))}
                                 </tbody>
                             </table>
+                        </div>
+
+                        {/* Mobile View */}
+                        <div className="tw-block md:tw-hidden tw-mt-4">
+                            {sortedData.map((c, index) => (
+                                <MobileCard key={c.id}>
+                                    <MobileCard.Header label="#" value={startIndex + index} />
+                                    <MobileCard.Body>
+                                        <div className="tw-grid tw-grid-cols-2 tw-gap-3">
+                                            <MobileCard.Field label="District Name" value={c.districtName} />
+                                            <MobileCard.Field label="City Name" value={c.name} />
+                                            <MobileCard.Field label="Status" value={
+                                                <span className="badge badge-success" style={{ backgroundColor: c.status === 1 ? '#28a745' : '#dc3545' }}>
+                                                    {c.status_label || (c.status === 1 ? 'Active' : 'Inactive')}
+                                                </span>
+                                            } />
+                                        </div>
+                                    </MobileCard.Body>
+                                    {hasActionPermission && (
+                                        <MobileCard.Footer className="tw-border-t tw-border-slate-100 tw-flex tw-justify-end tw-items-center">
+                                            <MobileCard.Actions>
+                                                {hasPermission('Power Master.Geo Locations - City.Edit') && (
+                                                    <button type="button" className="list-action-btn btn-edit" onClick={() => navigate(`/power-master/geolocations/city/edit/${c.id}`)}>
+                                                        <PencilSimpleIcon weight="duotone" className="tw-w-4" />
+                                                    </button>
+                                                )}
+                                                {hasPermission('Power Master.Geo Locations - City.Delete') && (
+                                                    <button
+                                                        type="button"
+                                                        className="list-action-btn btn-delete"
+                                                        onClick={() => handleDelete(c.id)}
+                                                    >
+                                                        <TrashIcon weight="duotone" className="tw-w-4" />
+                                                    </button>
+                                                )}
+                                            </MobileCard.Actions>
+                                        </MobileCard.Footer>
+                                    )}
+                                </MobileCard>
+                            ))}
+                            {sortedData.length === 0 && (
+                                <div className="tw-text-center tw-text-slate-400 tw-py-8">No records found</div>
+                            )}
                         </div>
                         <div className="tw-flex tw-justify-between tw-items-center tw-mt-4">
                             <div className="tw-text-gray-600 tw-text-sm">

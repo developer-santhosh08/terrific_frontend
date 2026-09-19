@@ -7,7 +7,7 @@ import { PencilSimpleIcon, GearSixIcon, PlusIcon, TrashIcon } from '@phosphor-ic
 import TableSortIcon from '../../../../components/TableSortIcon';
 import DeletePopup from '../../../../components/Popup/DeletePopup.jsx';
 import { usePermissions } from '../../../../context/PermissionContext';
-
+import MobileCard from '../../../../components/common/MobileCard';
 const CustomerList = () => {
     const { hasPermission } = usePermissions();
     const hasActionPermission = hasPermission('Power Master.Customer - Customer.Edit') || hasPermission('Power Master.Customer - Customer.Delete');
@@ -142,7 +142,7 @@ const CustomerList = () => {
                             </div>
                         </div>
 
-                        <div className="table-responsive">
+                        <div className="table-responsive tw-hidden md:tw-block">
                             <table className="table table-bordered table-striped no-margin">
                                 <thead>
                                     <tr>
@@ -201,6 +201,53 @@ const CustomerList = () => {
                                     )}
                                 </tbody>
                             </table>
+                        </div>
+
+                        {/* Mobile View */}
+                        <div className="tw-block md:tw-hidden tw-mt-4">
+                            {loading ? (
+                                <div className="tw-text-center tw-py-4">Loading...</div>
+                            ) : (
+                                <>
+                                    {sortedData.map((e, index) => (
+                                        <MobileCard key={index}>
+                                            <MobileCard.Header label="#" value={startIndex + index} />
+                                            <MobileCard.Body>
+                                                <div className="tw-grid tw-grid-cols-2 tw-gap-3">
+                                                    <MobileCard.Field label="Name" value={e.name} />
+                                                    <MobileCard.Field label="Address1" value={e.address1} />
+                                                    <MobileCard.Field label="Address2" value={e.address2} />
+                                                    <MobileCard.Field label="Mobile" value={e.mobile} />
+                                                    <MobileCard.Field label="Status" value={
+                                                        <span className={`badge ${e.status === 'Active' ? 'bg-success' : 'bg-danger'}`}>
+                                                            {e.status}
+                                                        </span>
+                                                    } />
+                                                </div>
+                                            </MobileCard.Body>
+                                            {hasActionPermission && (
+                                                <MobileCard.Footer className="tw-border-t tw-border-slate-100 tw-flex tw-justify-end tw-items-center">
+                                                    <MobileCard.Actions>
+                                                        {hasPermission('Power Master.Customer - Customer.Edit') && (
+                                                            <button type="button" className="list-action-btn btn-edit" onClick={() => navigate(`/power-master/customer/customer/edit/${e.id}`)}>
+                                                                <PencilSimpleIcon weight="duotone" className="tw-w-4" />
+                                                            </button>
+                                                        )}
+                                                        {hasPermission('Power Master.Customer - Customer.Delete') && (
+                                                            <button type="button" className="list-action-btn btn-delete" onClick={() => handleDelete(e.id)}>
+                                                                <TrashIcon weight="duotone" className="tw-w-4" />
+                                                            </button>
+                                                        )}
+                                                    </MobileCard.Actions>
+                                                </MobileCard.Footer>
+                                            )}
+                                        </MobileCard>
+                                    ))}
+                                    {sortedData.length === 0 && (
+                                        <div className="tw-text-center tw-text-slate-400 tw-py-8">No data available in table</div>
+                                    )}
+                                </>
+                            )}
                         </div>
                         <div className="tw-flex tw-justify-between tw-items-center tw-mt-4">
                             <div className="tw-text-gray-600 tw-text-sm">
