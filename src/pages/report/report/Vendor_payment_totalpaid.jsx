@@ -3,6 +3,7 @@ import TableSortIcon from '../../../components/TableSortIcon';
 import SmartPagination from '../../../components/SmartPagination';
 import { useSortableData } from '../../../hooks/useSortableData';
 import MobileCard from '../../../components/common/MobileCard';
+import ExportButtons from '../../../components/common/ExportButtons';
 
 const VendorPaymentTotalPaid = () => {
     const [reportData, setReportData] = useState([]);
@@ -69,6 +70,19 @@ const VendorPaymentTotalPaid = () => {
     const startIndex = (currentPage - 1) * entriesPerPage;
     const paginatedData = sortedData.slice(startIndex, startIndex + parseInt(entriesPerPage));
 
+    const exportColumns = [
+        { header: 'Vendor Name', key: 'vendorName' },
+        { header: 'Mobile Number', key: 'mobileNumber' },
+        { header: 'Total Paid Amount', key: 'totalPaidAmount' }
+    ];
+
+    const exportData = searchFilteredData.map(row => ({
+        ...row,
+        vendorName: row.vendor_name || '-',
+        mobileNumber: row.mobile_number || '-',
+        totalPaidAmount: (Number(row.total_paid_amount) || 0).toFixed(2)
+    }));
+
     return (
         <section className="content">
             <div className="container-fluid">
@@ -97,15 +111,24 @@ const VendorPaymentTotalPaid = () => {
                         </div>
 
                         <div className="d-flex flex-column flex-md-row justify-content-md-between align-items-start align-items-md-center tw-gap-2 tw-mb-4 tw-text-sm tw-text-slate-600">
-                            <div className="d-flex align-items-center tw-gap-2">
-                                <span>Show</span>
-                                <select className="form-select form-select-sm tw-w-20 tw-inline-block" value={entriesPerPage} onChange={(e) => {setEntriesPerPage(e.target.value); setCurrentPage(1);}}>
-                                    <option value="10">10</option>
-                                    <option value="25">25</option>
-                                    <option value="50">50</option>
-                                    <option value="100">100</option>
-                                </select>
-                                <span>entries</span>
+                            <div className="d-flex flex-wrap align-items-center tw-gap-4">
+                                <div className="d-flex align-items-center tw-gap-2">
+                                    <span>Show</span>
+                                    <select className="form-select form-select-sm tw-w-20 tw-inline-block" value={entriesPerPage} onChange={(e) => {setEntriesPerPage(e.target.value); setCurrentPage(1);}}>
+                                        <option value="10">10</option>
+                                        <option value="25">25</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                    </select>
+                                    <span>entries</span>
+                                </div>
+                                <ExportButtons 
+                                    data={exportData}
+                                    columns={exportColumns}
+                                    filename="Vendor_Payment_Paid"
+                                    title="Paid Vendor Payment Report"
+                                    tableId="vendor-payment-paid-table"
+                                />
                             </div>
                             <div className="d-flex align-items-center tw-gap-2">
                                 <span>Search:</span>
@@ -120,7 +143,7 @@ const VendorPaymentTotalPaid = () => {
 
                         {/* ── Table ── */}
                         <div className="table-responsive tw-hidden md:tw-block">
-                            <table className="table table-bordered table-striped no-margin">
+                            <table id="vendor-payment-paid-table" className="table table-bordered table-striped no-margin">
                                 <thead>
                                     <tr>
                                         <th className="tw-align-middle tw-cursor-pointer hover:tw-bg-slate-50">

@@ -4,6 +4,7 @@ import TableSortIcon from '../../../components/TableSortIcon';
 import SmartPagination from '../../../components/SmartPagination';
 import { useSortableData } from '../../../hooks/useSortableData';
 import MobileCard from '../../../components/common/MobileCard';
+import ExportButtons from '../../../components/common/ExportButtons';
 
 const vendorOptions = [
     { value: 'v1', label: 'Saras Industry'       },
@@ -68,6 +69,16 @@ const VendorLedgerReport = () => {
     const startIndex = (currentPage - 1) * entriesPerPage;
     const paginatedData = sortedData.slice(startIndex, startIndex + parseInt(entriesPerPage));
 
+    const exportColumns = [
+        { header: 'Vendor Name', key: 'vendorName' },
+        { header: 'Invoice No', key: 'invoiceNo' },
+        { header: 'Date', key: 'date' },
+        { header: 'Amount', key: 'amount' },
+        { header: 'Balance', key: 'balance' }
+    ];
+
+    const exportData = searchFilteredData;
+
     return (
         <section className="content">
             <div className="container-fluid">
@@ -117,15 +128,24 @@ const VendorLedgerReport = () => {
                         </div>
 
                         <div className="d-flex flex-column flex-md-row justify-content-md-between align-items-start align-items-md-center tw-gap-2 tw-mb-4 tw-text-sm tw-text-slate-600">
-                            <div className="d-flex align-items-center tw-gap-2">
-                                <span>Show</span>
-                                <select className="form-select form-select-sm tw-w-20 tw-inline-block" value={entriesPerPage} onChange={(e) => {setEntriesPerPage(e.target.value); setCurrentPage(1);}}>
-                                    <option value="10">10</option>
-                                    <option value="25">25</option>
-                                    <option value="50">50</option>
-                                    <option value="100">100</option>
-                                </select>
-                                <span>entries</span>
+                            <div className="d-flex flex-wrap align-items-center tw-gap-4">
+                                <div className="d-flex align-items-center tw-gap-2">
+                                    <span>Show</span>
+                                    <select className="form-select form-select-sm tw-w-20 tw-inline-block" value={entriesPerPage} onChange={(e) => {setEntriesPerPage(e.target.value); setCurrentPage(1);}}>
+                                        <option value="10">10</option>
+                                        <option value="25">25</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                    </select>
+                                    <span>entries</span>
+                                </div>
+                                <ExportButtons 
+                                    data={exportData}
+                                    columns={exportColumns}
+                                    filename="Vendor_Ledger_Report"
+                                    title="Vendor Ledger Report"
+                                    tableId="vendor-ledger-report-table"
+                                />
                             </div>
                             <div className="d-flex align-items-center tw-gap-2">
                                 <span>Search:</span>
@@ -140,7 +160,7 @@ const VendorLedgerReport = () => {
 
                         {/* ── Table ── */}
                         <div className="table-responsive tw-hidden md:tw-block">
-                            <table className="table table-bordered table-striped no-margin">
+                            <table id="vendor-ledger-report-table" className="table table-bordered table-striped no-margin">
                                 <thead>
                                     <tr>
                                         <th className="tw-align-middle tw-cursor-pointer hover:tw-bg-slate-50">
